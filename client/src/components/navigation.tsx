@@ -1,14 +1,15 @@
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
+import { CloudSun, Heart, TrendingUp, Settings } from "lucide-react";
 
 export function Navigation() {
   const [location] = useLocation();
 
   const navItems = [
-    { href: "/", icon: "fas fa-cloud-sun", label: "الطقس" },
-    { href: "/favorites", icon: "fas fa-heart", label: "المفضلة" },
-    { href: "/forecast", icon: "fas fa-chart-line", label: "التوقعات" },
-    { href: "/settings", icon: "fas fa-sliders-h", label: "الإعدادات" },
+    { href: "/", icon: CloudSun, label: "الطقس" },
+    { href: "/favorites", icon: Heart, label: "المفضلة" },
+    { href: "/forecast", icon: TrendingUp, label: "التوقعات" },
+    { href: "/settings", icon: Settings, label: "الإعدادات" },
   ];
 
   return (
@@ -28,7 +29,7 @@ export function Navigation() {
                   ? "bg-gradient-to-br from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/50" 
                   : "text-gray-600 hover:bg-purple-50 hover:text-purple-600"
               )}>
-                <i className={`${item.icon} text-xl`}></i>
+                <item.icon className="w-6 h-6" />
                 {location === item.href && (
                   <div className="absolute -top-1 -right-1 w-3 h-3 bg-white rounded-full border-2 border-purple-500"></div>
                 )}
