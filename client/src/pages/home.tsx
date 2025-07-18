@@ -8,7 +8,7 @@ import { ForecastCard } from "@/components/forecast-card";
 import { Navigation } from "@/components/navigation";
 import { Sidebar } from "@/components/sidebar";
 import { weatherService } from "@/services/weather";
-import { Search, CloudSun } from "lucide-react";
+import { Search, CloudSun, Heart, MapPin, Menu } from "lucide-react";
 import type { CityResult, WeatherData } from "@/types/weather";
 
 export default function Home() {
@@ -16,6 +16,7 @@ export default function Home() {
   const [selectedCity, setSelectedCity] = useState<CityResult | null>(null);
   const [searchResults, setSearchResults] = useState<CityResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [favorites, setFavorites] = useState<string[]>([]);
 
   // Get current date in Arabic with Gregorian calendar and English numbers
   const getCurrentDate = () => {
@@ -77,6 +78,49 @@ export default function Home() {
       );
     }
   }, []);
+
+  useEffect(() => {
+    // Load favorites from localStorage
+    const savedFavorites = localStorage.getItem('favoriteCities');
+    if (savedFavorites) {
+      const parsedFavorites = JSON.parse(savedFavorites);
+      setFavorites(parsedFavorites.map((city: any) => city.id));
+    }
+  }, []);
+
+  const addToFavorites = (city: CityResult) => {
+    const savedFavorites = localStorage.getItem('favoriteCities');
+    const existingFavorites = savedFavorites ? JSON.parse(savedFavorites) : [];
+    
+    const favoriteCity = {
+      id: `${city.lat}-${city.lon}`,
+      name: city.name,
+      country: city.country,
+      lat: city.lat,
+      lon: city.lon,
+      addedAt: new Date().toISOString(),
+    };
+    
+    const updatedFavorites = [...existingFavorites, favoriteCity];
+    localStorage.setItem('favoriteCities', JSON.stringify(updatedFavorites));
+    setFavorites(prev => [...prev, favoriteCity.id]);
+  };
+
+  const removeFromFavorites = (city: CityResult) => {
+    const savedFavorites = localStorage.getItem('favoriteCities');
+    if (savedFavorites) {
+      const existingFavorites = JSON.parse(savedFavorites);
+      const cityId = `${city.lat}-${city.lon}`;
+      const updatedFavorites = existingFavorites.filter((fav: any) => fav.id !== cityId);
+      localStorage.setItem('favoriteCities', JSON.stringify(updatedFavorites));
+      setFavorites(prev => prev.filter(id => id !== cityId));
+    }
+  };
+
+  const isFavorite = (city: CityResult) => {
+    const cityId = `${city.lat}-${city.lon}`;
+    return favorites.includes(cityId);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600">
@@ -140,11 +184,31 @@ export default function Home() {
         ) : weatherData && selectedCity ? (
           <>
             {/* Current Weather */}
-            <WeatherCard
-              weather={weatherData.current}
-              cityName={selectedCity.name}
-              currentDate={getCurrentDate()}
-            />
+            <div className="relative">
+              <WeatherCard
+                weather={weatherData.current}
+                cityName={selectedCity.name}
+                currentDate={getCurrentDate()}
+              />
+              {selectedCity && selectedCity.name !== "موقعي الحالي" && (
+                <Button
+                  className={`absolute top-4 left-4 rounded-full w-12 h-12 p-0 ${
+                    isFavorite(selectedCity) 
+                      ? 'bg-red-500 hover:bg-red-600 text-white' 
+                      : 'bg-white hover:bg-gray-100 text-gray-600'
+                  }`}
+                  onClick={() => {
+                    if (isFavorite(selectedCity)) {
+                      removeFromFavorites(selectedCity);
+                    } else {
+                      addToFavorites(selectedCity);
+                    }
+                  }}
+                >
+                  <Heart className={`w-6 h-6 ${isFavorite(selectedCity) ? 'fill-current' : ''}`} />
+                </Button>
+              )}
+            </div>
 
             {/* Weather Details */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
