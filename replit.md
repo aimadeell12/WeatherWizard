@@ -2,11 +2,12 @@
 
 ## Overview
 
-This is a full-stack weather application built with React and Express that provides current weather data and forecasts for cities worldwide. The app features a modern, responsive design with Arabic language support and integrates with the OpenWeatherMap API to deliver accurate weather information.
+This is a full-stack weather application built with React and Express that provides current weather data and forecasts for cities worldwide. The app features a modern, responsive design with Arabic language support and integrates with the WeatherAPI.com to deliver accurate weather information. The app uses a purple color theme with gradients and displays all numbers in English numerals with Gregorian calendar for better readability.
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Display preferences: English numbers, Gregorian calendar, purple color theme with gradients.
 
 ## System Architecture
 
@@ -44,10 +45,12 @@ Preferred communication style: Simple, everyday language.
   - `/api/favorites` - Manage user's favorite cities
 
 ### UI Components
-- **Weather Display**: Current weather cards with temperature, conditions, and forecast
+- **Weather Display**: Current weather cards with temperature, conditions, and forecast (purple theme)
 - **City Search**: Auto-complete search with city suggestions
-- **Navigation**: Mobile-first navigation with sidebar for desktop
+- **Navigation**: Enhanced bottom navigation with gradient buttons and smooth animations
 - **Responsive Design**: Optimized for both mobile and desktop viewing
+- **Number Display**: All numbers shown in English numerals with forced Western Arabic numerals
+- **Date Display**: Gregorian calendar with Arabic month names but English numbers
 
 ### User Management
 - **Schema**: Users table with username/password authentication

@@ -9,7 +9,7 @@ interface ForecastCardProps {
 export function ForecastCard({ forecast }: ForecastCardProps) {
   const getDayName = (timestamp: number) => {
     const date = new Date(timestamp * 1000);
-    return date.toLocaleDateString("ar-EG", { weekday: "long", calendar: "gregory" });
+    return date.toLocaleDateString("ar-EG-u-nu-latn", { weekday: "long", calendar: "gregory" });
   };
 
   return (
@@ -31,7 +31,7 @@ export function ForecastCard({ forecast }: ForecastCardProps) {
                     <p className="text-sm text-gray-600">{weather.description}</p>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="text-right english-numbers">
                   <span className="text-lg font-bold">
                     {Math.round(day.temp.max)}°
                   </span>

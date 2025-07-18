@@ -22,7 +22,7 @@ export function WeatherCard({ weather, cityName, currentDate }: WeatherCardProps
             <p className="text-gray-600">{currentDate}</p>
           </div>
           <div className="text-right">
-            <span className="text-4xl font-bold text-purple-600">
+            <span className="text-4xl font-bold text-purple-600 english-numbers">
               {Math.round(weather.temp)}°
             </span>
             <span className="text-xl text-gray-600">C</span>
@@ -34,16 +34,16 @@ export function WeatherCard({ weather, cityName, currentDate }: WeatherCardProps
             <i className={`${iconClass} ${colorClass} text-3xl mr-3`}></i>
             <div>
               <p className="text-lg font-medium">{mainWeather.description}</p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 english-numbers">
                 يبدو وكأنه {Math.round(weather.feels_like)}°
               </p>
             </div>
           </div>
           <div className="text-right">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 english-numbers">
               الرطوبة: {weather.humidity}%
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 english-numbers">
               الرياح: {Math.round(weather.wind_speed)} كم/س
             </p>
           </div>

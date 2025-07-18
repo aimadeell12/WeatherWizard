@@ -64,10 +64,21 @@
   body {
     @apply font-sans antialiased bg-background text-foreground;
     direction: rtl;
+    font-variant-numeric: lining-nums;
   }
 
   html {
     direction: rtl;
+  }
+  
+  /* Force English numbers */
+  .english-numbers {
+    font-variant-numeric: lining-nums;
+  }
+  
+  /* Add shadow to bottom navigation */
+  .bottom-nav-shadow {
+    box-shadow: 0 -4px 20px rgba(147, 51, 234, 0.1);
   }
 }
 
@@ -85,7 +96,7 @@
   }
   
   .nav-item {
-    @apply flex flex-col items-center py-2 px-4 text-gray-600 hover:text-purple-600 transition-colors;
+    @apply flex flex-col items-center py-2 px-3 text-gray-600 transition-all duration-300;
   }
   
   .nav-item.active {

@@ -17,9 +17,9 @@ export default function Home() {
   const [searchResults, setSearchResults] = useState<CityResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
-  // Get current date in Arabic with Gregorian calendar
+  // Get current date in Arabic with Gregorian calendar and English numbers
   const getCurrentDate = () => {
-    return new Date().toLocaleDateString("ar-EG", {
+    return new Date().toLocaleDateString("ar-EG-u-nu-latn", {
       weekday: "long",
       year: "numeric",
       month: "long",
@@ -152,7 +152,7 @@ export default function Home() {
                 <CardContent className="p-4">
                   <i className="fas fa-thermometer-half text-purple-500 text-2xl mb-2"></i>
                   <p className="text-sm text-gray-600">الحرارة العظمى</p>
-                  <p className="text-xl font-bold">
+                  <p className="text-xl font-bold english-numbers">
                     {Math.round(weatherData.daily[0].temp.max)}°
                   </p>
                 </CardContent>
@@ -161,7 +161,7 @@ export default function Home() {
                 <CardContent className="p-4">
                   <i className="fas fa-thermometer-empty text-purple-400 text-2xl mb-2"></i>
                   <p className="text-sm text-gray-600">الحرارة الصغرى</p>
-                  <p className="text-xl font-bold">
+                  <p className="text-xl font-bold english-numbers">
                     {Math.round(weatherData.daily[0].temp.min)}°
                   </p>
                 </CardContent>
@@ -170,14 +170,14 @@ export default function Home() {
                 <CardContent className="p-4">
                   <i className="fas fa-tint text-purple-600 text-2xl mb-2"></i>
                   <p className="text-sm text-gray-600">الرطوبة</p>
-                  <p className="text-xl font-bold">{weatherData.current.humidity}%</p>
+                  <p className="text-xl font-bold english-numbers">{weatherData.current.humidity}%</p>
                 </CardContent>
               </Card>
               <Card className="weather-detail-card">
                 <CardContent className="p-4">
                   <i className="fas fa-wind text-purple-300 text-2xl mb-2"></i>
                   <p className="text-sm text-gray-600">الرياح</p>
-                  <p className="text-xl font-bold">
+                  <p className="text-xl font-bold english-numbers">
                     {Math.round(weatherData.current.wind_speed)} كم/س
                   </p>
                 </CardContent>
