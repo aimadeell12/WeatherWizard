@@ -119,7 +119,7 @@ export default function Home() {
                   >
                     <div className="font-medium">{city.name}</div>
                     <div className="text-sm text-gray-600">
-                      {city.country} {city.state && `، ${city.state}`}
+                      {city.country} {city.region && `، ${city.region}`}
                     </div>
                   </button>
                 ))}

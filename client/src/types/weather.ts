@@ -31,7 +31,7 @@ export interface CityResult {
   country: string;
   lat: number;
   lon: number;
-  state?: string;
+  region?: string;
 }
 
 export interface FavoriteCity {
