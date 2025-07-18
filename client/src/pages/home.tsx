@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,8 @@ import { ForecastCard } from "@/components/forecast-card";
 import { Navigation } from "@/components/navigation";
 import { Sidebar } from "@/components/sidebar";
 import { weatherService } from "@/services/weather";
+import { useTheme } from "@/contexts/ThemeContext";
+import { useAutoRefresh } from "@/hooks/useAutoRefresh";
 import { Search, CloudSun, Heart, MapPin, Menu } from "lucide-react";
 import type { CityResult, WeatherData } from "@/types/weather";
 
@@ -17,6 +19,7 @@ export default function Home() {
   const [searchResults, setSearchResults] = useState<CityResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [favorites, setFavorites] = useState<string[]>([]);
+  const { settings } = useTheme();
 
   // Get current date in Arabic with Gregorian calendar and English numbers
   const getCurrentDate = () => {
@@ -49,10 +52,20 @@ export default function Home() {
   };
 
   // Get weather data for selected city
-  const { data: weatherData, isLoading: isLoadingWeather } = useQuery<WeatherData>({
+  const { data: weatherData, isLoading: isLoadingWeather, refetch } = useQuery<WeatherData>({
     queryKey: [`/api/weather?lat=${selectedCity?.lat}&lon=${selectedCity?.lon}`],
     enabled: !!selectedCity,
   });
+
+  // Auto-refresh callback
+  const handleAutoRefresh = useCallback(() => {
+    if (selectedCity) {
+      refetch();
+    }
+  }, [selectedCity, refetch]);
+
+  // Use auto-refresh hook
+  useAutoRefresh(handleAutoRefresh);
 
   // Get user's location on mount
   useEffect(() => {
@@ -123,7 +136,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600">
+    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600 dark:from-purple-900 dark:via-purple-800 dark:to-purple-900">
       {/* Header */}
       <header className="bg-primary shadow-lg">
         <div className="container mx-auto px-4 py-4">
@@ -151,19 +164,19 @@ export default function Home() {
             
             {/* Search Results */}
             {searchResults.length > 0 && (
-              <div className="absolute top-full left-0 right-0 bg-white rounded-lg shadow-lg mt-2 max-h-60 overflow-y-auto z-10">
+              <div className="absolute top-full left-0 right-0 bg-white dark:bg-gray-800 rounded-lg shadow-lg mt-2 max-h-60 overflow-y-auto z-10 border border-gray-200 dark:border-gray-700">
                 {searchResults.map((city, index) => (
                   <button
                     key={index}
-                    className="w-full px-4 py-3 text-right hover:bg-gray-100 border-b border-gray-100 last:border-b-0"
+                    className="w-full px-4 py-3 text-right hover:bg-gray-100 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-700 last:border-b-0 transition-colors"
                     onClick={() => {
                       setSelectedCity(city);
                       setSearchQuery("");
                       setSearchResults([]);
                     }}
                   >
-                    <div className="font-medium">{city.name}</div>
-                    <div className="text-sm text-gray-600">
+                    <div className="font-medium text-gray-800 dark:text-gray-200">{city.name}</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
                       {city.country} {city.region && `، ${city.region}`}
                     </div>
                   </button>

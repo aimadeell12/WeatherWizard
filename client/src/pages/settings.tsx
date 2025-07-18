@@ -1,44 +1,25 @@
-import { useState, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Settings, Moon, Sun, Globe, Thermometer, Bell, Info, Shield, FileText, Copyright, Phone } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { Settings, Moon, Sun, Globe, Thermometer, Bell, Info, Shield, FileText, Copyright, Phone, Download, Upload, RotateCcw, Trash2 } from 'lucide-react';
 import { Navigation } from '@/components/navigation';
 import { Link } from 'wouter';
-
-interface AppSettings {
-  darkMode: boolean;
-  notifications: boolean;
-  temperatureUnit: 'celsius' | 'fahrenheit';
-  language: 'ar' | 'en';
-  autoRefresh: boolean;
-  refreshInterval: number;
-}
+import { useTheme } from '@/contexts/ThemeContext';
+import { useNotification } from '@/contexts/NotificationContext';
+import { useToast } from '@/hooks/use-toast';
 
 export default function SettingsPage() {
-  const [settings, setSettings] = useState<AppSettings>({
-    darkMode: false,
-    notifications: true,
-    temperatureUnit: 'celsius',
-    language: 'ar',
-    autoRefresh: true,
-    refreshInterval: 10,
-  });
-
-  useEffect(() => {
-    // Load settings from localStorage
-    const savedSettings = localStorage.getItem('appSettings');
-    if (savedSettings) {
-      setSettings(JSON.parse(savedSettings));
-    }
-  }, []);
-
-  const updateSetting = (key: keyof AppSettings, value: any) => {
-    const newSettings = { ...settings, [key]: value };
-    setSettings(newSettings);
-    localStorage.setItem('appSettings', JSON.stringify(newSettings));
-  };
+  const { settings, updateSetting, resetSettings, exportSettings, importSettings } = useTheme();
+  const { requestNotificationPermission, isNotificationSupported, permissionStatus } = useNotification();
+  const { toast } = useToast();
+  const [importData, setImportData] = useState('');
+  const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
+  const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const getCurrentDate = () => {
     return new Date().toLocaleDateString("ar-EG-u-nu-latn", {
@@ -50,10 +31,96 @@ export default function SettingsPage() {
     });
   };
 
+  const handleNotificationToggle = async (checked: boolean) => {
+    if (checked && isNotificationSupported && permissionStatus !== 'granted') {
+      const granted = await requestNotificationPermission();
+      if (granted) {
+        updateSetting('notifications', true);
+        toast({
+          title: "تم تفعيل التنبيهات",
+          description: "سيتم إرسال التنبيهات عند تغيير الطقس",
+        });
+      } else {
+        toast({
+          title: "فشل في تفعيل التنبيهات",
+          description: "يرجى السماح بالتنبيهات من إعدادات المتصفح",
+          variant: "destructive",
+        });
+      }
+    } else {
+      updateSetting('notifications', checked);
+      toast({
+        title: checked ? "تم تفعيل التنبيهات" : "تم إلغاء التنبيهات",
+        description: checked ? "سيتم إرسال التنبيهات عند تغيير الطقس" : "لن يتم إرسال التنبيهات",
+      });
+    }
+  };
+
   const clearCache = () => {
     localStorage.removeItem('favoriteCities');
     localStorage.removeItem('weatherCache');
-    alert('تم مسح البيانات المحفوظة بنجاح');
+    toast({
+      title: "تم مسح البيانات",
+      description: "تم حذف جميع البيانات المحفوظة بنجاح",
+    });
+  };
+
+  const handleResetSettings = () => {
+    resetSettings();
+    toast({
+      title: "تم إعادة تعيين الإعدادات",
+      description: "تم استعادة الإعدادات الافتراضية",
+    });
+  };
+
+  const handleExportSettings = () => {
+    const data = exportSettings();
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'weather-app-settings.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast({
+      title: "تم تصدير الإعدادات",
+      description: "تم حفظ الإعدادات في ملف JSON",
+    });
+  };
+
+  const handleImportSettings = () => {
+    if (importData.trim()) {
+      const success = importSettings(importData);
+      if (success) {
+        toast({
+          title: "تم استيراد الإعدادات",
+          description: "تم تطبيق الإعدادات الجديدة بنجاح",
+        });
+        setImportData('');
+        setIsImportDialogOpen(false);
+      } else {
+        toast({
+          title: "فشل في استيراد الإعدادات",
+          description: "ملف الإعدادات غير صالح",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  const handleFileImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const content = e.target?.result as string;
+        setImportData(content);
+        setIsImportDialogOpen(true);
+      };
+      reader.readAsText(file);
+    }
   };
 
   return (
@@ -119,6 +186,29 @@ export default function SettingsPage() {
                   </Button>
                 </div>
               </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Globe className="w-5 h-5 text-purple-600 mr-2" />
+                  <Label htmlFor="language">اللغة</Label>
+                </div>
+                <div className="flex items-center space-x-2 space-x-reverse">
+                  <Button
+                    variant={settings.language === 'ar' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => updateSetting('language', 'ar')}
+                  >
+                    العربية
+                  </Button>
+                  <Button
+                    variant={settings.language === 'en' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => updateSetting('language', 'en')}
+                  >
+                    English
+                  </Button>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
@@ -132,11 +222,20 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
-                <Label htmlFor="notifications">تفعيل التنبيهات</Label>
+                <div className="flex flex-col">
+                  <Label htmlFor="notifications">تفعيل التنبيهات</Label>
+                  {!isNotificationSupported && (
+                    <span className="text-xs text-red-500 mt-1">المتصفح لا يدعم التنبيهات</span>
+                  )}
+                  {isNotificationSupported && permissionStatus === 'denied' && (
+                    <span className="text-xs text-red-500 mt-1">تم رفض التنبيهات من المتصفح</span>
+                  )}
+                </div>
                 <Switch
                   id="notifications"
                   checked={settings.notifications}
-                  onCheckedChange={(checked) => updateSetting('notifications', checked)}
+                  onCheckedChange={handleNotificationToggle}
+                  disabled={!isNotificationSupported}
                 />
               </div>
 
@@ -245,15 +344,95 @@ export default function SettingsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Button
-                variant="outline"
-                onClick={clearCache}
-                className="w-full"
-              >
-                مسح البيانات المحفوظة
-              </Button>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <Button
+                  variant="outline"
+                  onClick={handleExportSettings}
+                  className="w-full"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  تصدير الإعدادات
+                </Button>
+                
+                <Dialog open={isImportDialogOpen} onOpenChange={setIsImportDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" className="w-full">
+                      <Upload className="w-4 h-4 mr-2" />
+                      استيراد الإعدادات
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>استيراد الإعدادات</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                      <div className="flex gap-2">
+                        <input
+                          type="file"
+                          accept=".json"
+                          onChange={handleFileImport}
+                          ref={fileInputRef}
+                          className="hidden"
+                        />
+                        <Button
+                          variant="outline"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="flex-1"
+                        >
+                          <Upload className="w-4 h-4 mr-2" />
+                          اختر ملف
+                        </Button>
+                      </div>
+                      <div>
+                        <Label htmlFor="import-data">أو الصق البيانات:</Label>
+                        <Textarea
+                          id="import-data"
+                          placeholder="الصق محتوى ملف الإعدادات هنا..."
+                          value={importData}
+                          onChange={(e) => setImportData(e.target.value)}
+                          className="mt-2"
+                          rows={8}
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <Button onClick={handleImportSettings} className="flex-1">
+                          استيراد
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          onClick={() => setIsImportDialogOpen(false)}
+                          className="flex-1"
+                        >
+                          إلغاء
+                        </Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <Button
+                  variant="outline"
+                  onClick={handleResetSettings}
+                  className="w-full"
+                >
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  إعادة تعيين الإعدادات
+                </Button>
+                
+                <Button
+                  variant="outline"
+                  onClick={clearCache}
+                  className="w-full"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  مسح البيانات المحفوظة
+                </Button>
+              </div>
+              
               <p className="text-sm text-gray-600">
-                سيتم مسح جميع المدن المفضلة والبيانات المحفوظة محلياً
+                يمكنك تصدير الإعدادات الحالية أو استيراد إعدادات محفوظة سابقاً
               </p>
             </CardContent>
           </Card>
