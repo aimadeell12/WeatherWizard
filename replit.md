@@ -52,7 +52,9 @@ App Identity: ArabWeather Pro (English name), طقس العرب المطور (Ar
 - **Responsive Design**: Optimized for both mobile and desktop viewing with RTL support
 - **Number Display**: All numbers shown in English numerals with forced Western Arabic numerals
 - **Date Display**: Gregorian calendar with Arabic month names but English numbers
-- **App Icon**: Custom SVG icon with weather elements (sun, clouds, rain, thermometer) in purple gradient
+- **App Icon**: Custom SVG icons with weather elements (sun, clouds, rain, thermometer) in purple gradient
+  - **icon-any.svg**: Regular PWA icon for "any" purpose with full branding
+  - **icon-maskable.svg**: Maskable PWA icon with safe zone padding for adaptive icon display
 - **Favorites System**: Add/remove cities from favorites with heart icon and localStorage persistence
 
 ### User Management
