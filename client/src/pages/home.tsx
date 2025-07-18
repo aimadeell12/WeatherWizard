@@ -130,7 +130,7 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <h1 className="text-white text-2xl font-bold flex items-center">
               <CloudSun className="mr-2 h-6 w-6" />
-              تطبيق الطقس
+              ArabWeather Pro
             </h1>
             <Sidebar />
           </div>
