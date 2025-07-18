@@ -48,7 +48,7 @@ export default function Home() {
 
   // Get weather data for selected city
   const { data: weatherData, isLoading: isLoadingWeather } = useQuery<WeatherData>({
-    queryKey: ["weather", selectedCity?.lat, selectedCity?.lon],
+    queryKey: [`/api/weather?lat=${selectedCity?.lat}&lon=${selectedCity?.lon}`],
     enabled: !!selectedCity,
   });
 
