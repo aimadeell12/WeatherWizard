@@ -97,6 +97,18 @@ App Identity: ArabWeather Pro (English name), طقس العرب المطور (Ar
 - **Canonical URLs**: Proper URL canonicalization
 - **Preloading**: Critical resource preloading for performance
 
+### PWA Features
+- **Service Worker**: Full offline support with caching strategies
+- **Background Sync**: Automatic data synchronization when back online
+- **Periodic Background Sync**: Automatic weather data updates every 24 hours
+- **Push Notifications**: Weather alerts and updates even when app is closed
+- **App Shortcuts**: Quick access to weather, favorites, and settings
+- **Offline Page**: Custom offline experience with cached data access
+- **Maskable Icons**: Adaptive icons for Android devices
+- **Share Target**: Accept shared weather data from other apps
+- **Protocol Handlers**: Handle weather-specific URLs
+- **Persistent Storage**: Maintains data across browser sessions
+
 ## Deployment Strategy
 
 ### Build Process

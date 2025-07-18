@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>غير متصل - طقس العرب المطور</title>
+    <link rel="icon" type="image/svg+xml" href="/icon-any.svg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #9333EA 0%, #7C3AED 50%, #6D28D9 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .offline-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .offline-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+        
+        .offline-title {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .offline-message {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+        
+        .retry-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        
+        .retry-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .cached-data {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+        
+        .app-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 600px) {
+            .offline-container {
+                padding: 30px 20px;
+            }
+            
+            .offline-title {
+                font-size: 1.5rem;
+            }
+            
+            .offline-message {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <img src="/icon-any.svg" alt="طقس العرب المطور" class="app-logo">
+        <div class="offline-icon">📡</div>
+        <h1 class="offline-title">غير متصل بالإنترنت</h1>
+        <p class="offline-message">
+            يبدو أنك غير متصل بالإنترنت حالياً. 
+            يمكنك الاستمرار في استخدام التطبيق لمشاهدة البيانات المحفوظة مسبقاً.
+        </p>
+        
+        <button class="retry-button" onclick="window.location.reload()">
+            إعادة المحاولة
+        </button>
+        
+        <button class="retry-button" onclick="window.location.href = '/'">
+            العودة للصفحة الرئيسية
+        </button>
+        
+        <div class="cached-data">
+            <h3>📊 البيانات المتاحة حالياً</h3>
+            <p>يمكنك الوصول إلى بيانات الطقس المحفوظة مسبقاً والمدن المفضلة لديك.</p>
+        </div>
+    </div>
+    
+    <script>
+        // Check network status
+        function checkNetworkStatus() {
+            if (navigator.onLine) {
+                window.location.href = '/';
+            }
+        }
+        
+        // Listen for network changes
+        window.addEventListener('online', checkNetworkStatus);
+        
+        // Auto-retry every 30 seconds
+        setInterval(checkNetworkStatus, 30000);
+        
+        // Show connection status
+        function updateConnectionStatus() {
+            const status = navigator.onLine ? 'متصل' : 'غير متصل';
+            document.title = `${status} - طقس العرب المطور`;
+        }
+        
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+        
+        updateConnectionStatus();
+    </script>
+</body>
+</html>

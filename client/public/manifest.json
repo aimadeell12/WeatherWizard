@@ -1,4 +1,5 @@
 {
+  "id": "arabweather-pro-app",
   "name": "ArabWeather Pro - تطبيق طقس العرب المطور",
   "short_name": "ArabWeather Pro",
   "description": "تطبيق طقس شامل يوفر توقعات دقيقة للطقس في المدن العربية والعالمية",
@@ -97,6 +98,71 @@
   "lang": "ar-SA",
   "dir": "rtl",
   "categories": ["weather", "lifestyle", "utilities"],
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  "prefer_related_applications": false,
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://arabweather-pro.replit.app/",
+      "id": "arabweather-pro-app"
+    }
+  ],
+  "launch_handler": {
+    "client_mode": "auto"
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+weather",
+      "url": "/?weather=%s"
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "shortcuts": [
+    {
+      "name": "الطقس اليوم",
+      "short_name": "الطقس",
+      "description": "عرض الطقس اليوم",
+      "url": "/",
+      "icons": [
+        {
+          "src": "/icon-any.svg",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "المدن المفضلة",
+      "short_name": "المفضلة",
+      "description": "عرض المدن المفضلة",
+      "url": "/favorites",
+      "icons": [
+        {
+          "src": "/icon-any.svg",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "الإعدادات",
+      "short_name": "الإعدادات",
+      "description": "إعدادات التطبيق",
+      "url": "/settings",
+      "icons": [
+        {
+          "src": "/icon-any.svg",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
   "screenshots": [
     {
       "src": "/icon.svg",
