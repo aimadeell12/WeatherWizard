@@ -19,15 +19,20 @@ if ('serviceWorker' in navigator) {
         }
         
         // Register for background sync (basic support)
-        if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
+        if ('serviceWorker' in navigator && 
+            'sync' in window.ServiceWorkerRegistration.prototype && 
+            registration.sync) {
           try {
-            // Check if sync is available on the registration
-            if (registration.sync) {
-              registration.sync.register('weather-sync');
+            // Only register if we have a valid window context
+            if (typeof window !== 'undefined' && window.location) {
+              await registration.sync.register('weather-sync');
+              console.log('Background sync registered successfully');
             }
           } catch (error) {
-            console.log('Background sync not supported:', error);
+            console.log('Background sync registration failed:', error);
           }
+        } else {
+          console.log('Background sync not supported in this browser');
         }
       })
       .catch((registrationError) => {

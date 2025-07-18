@@ -80,14 +80,22 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('sync', (event) => {
   console.log('[ServiceWorker] Background sync', event.tag);
   
-  // Validate event tag length and content
-  if (event.tag && event.tag.length <= 20 && event.tag === 'weather-sync') {
+  // Strict validation for sync events
+  if (!event.tag || typeof event.tag !== 'string') {
+    console.log('[ServiceWorker] Invalid sync tag:', event.tag);
+    return;
+  }
+  
+  // Validate tag length (must be <= 20 characters) and content
+  if (event.tag.length > 0 && event.tag.length <= 20 && event.tag === 'weather-sync') {
     event.waitUntil(
       // Sync weather data when back online
       syncWeatherData().catch((error) => {
         console.log('[ServiceWorker] Sync failed:', error);
       })
     );
+  } else {
+    console.log('[ServiceWorker] Ignoring sync tag:', event.tag);
   }
 });
 
