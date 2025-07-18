@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Settings, Moon, Sun, Globe, Thermometer, Bell, Info, Shield, FileText } from 'lucide-react';
+import { Settings, Moon, Sun, Globe, Thermometer, Bell, Info, Shield, FileText, Copyright, Phone } from 'lucide-react';
 import { Navigation } from '@/components/navigation';
 import { Link } from 'wouter';
 
@@ -221,6 +221,18 @@ export default function SettingsPage() {
                   الشروط والأحكام
                 </Button>
               </Link>
+              
+              {/* Copyright Notice */}
+              <div className="flex items-center py-2">
+                <Copyright className="w-4 h-4 mr-2 text-purple-600" />
+                <span className="text-sm text-gray-600">جميع الحقوق محفوظة</span>
+              </div>
+              
+              {/* Phone Number */}
+              <div className="flex items-center py-2">
+                <Phone className="w-4 h-4 mr-2 text-purple-600" />
+                <span className="text-sm text-gray-600 english-numbers">+212663381823</span>
+              </div>
             </CardContent>
           </Card>
 
