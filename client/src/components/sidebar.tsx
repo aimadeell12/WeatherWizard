@@ -35,13 +35,13 @@ export function Sidebar() {
           <nav className="space-y-2">
             {menuItems.map((item) => (
               <Link key={item.href} href={item.href}>
-                <a
+                <div
                   className="menu-item"
                   onClick={() => setIsOpen(false)}
                 >
                   <i className={`${item.icon} ml-3`}></i>
                   {item.label}
-                </a>
+                </div>
               </Link>
             ))}
             
@@ -49,13 +49,13 @@ export function Sidebar() {
             
             {policyItems.map((item) => (
               <Link key={item.href} href={item.href}>
-                <a
+                <div
                   className="menu-item"
                   onClick={() => setIsOpen(false)}
                 >
                   <i className={`${item.icon} ml-3`}></i>
                   {item.label}
-                </a>
+                </div>
               </Link>
             ))}
           </nav>

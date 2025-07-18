@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
 
-const OPENWEATHER_API_KEY = process.env.OPENWEATHER_API_KEY || process.env.OPENWEATHERMAP_API_KEY || "";
+const WEATHERAPI_KEY = process.env.WEATHERAPI_KEY || "";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
@@ -16,11 +16,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const response = await fetch(
-        `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(q)}&limit=5&appid=${OPENWEATHER_API_KEY}`
+        `https://api.weatherapi.com/v1/search.json?key=${WEATHERAPI_KEY}&q=${encodeURIComponent(q)}`
       );
 
       if (!response.ok) {
-        throw new Error(`OpenWeather API error: ${response.status}`);
+        throw new Error(`WeatherAPI error: ${response.status}`);
       }
 
       const data = await response.json();
@@ -29,7 +29,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         country: city.country,
         lat: city.lat,
         lon: city.lon,
-        state: city.state || "",
+        region: city.region || "",
       }));
 
       res.json(cities);
@@ -48,15 +48,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const response = await fetch(
-        `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude=minutely,hourly,alerts&units=metric&lang=ar&appid=${OPENWEATHER_API_KEY}`
+        `https://api.weatherapi.com/v1/forecast.json?key=${WEATHERAPI_KEY}&q=${lat},${lon}&days=7&aqi=no&alerts=no&lang=ar`
       );
 
       if (!response.ok) {
-        throw new Error(`OpenWeather API error: ${response.status}`);
+        throw new Error(`WeatherAPI error: ${response.status}`);
       }
 
       const data = await response.json();
-      res.json(data);
+      
+      // Convert WeatherAPI response to match our existing structure
+      const weatherData = {
+        current: {
+          temp: data.current.temp_c,
+          feels_like: data.current.feelslike_c,
+          humidity: data.current.humidity,
+          wind_speed: data.current.wind_kph,
+          weather: [{
+            main: data.current.condition.text,
+            description: data.current.condition.text,
+            icon: data.current.condition.icon.split('/').pop()?.split('.')[0] || '01d'
+          }]
+        },
+        daily: data.forecast.forecastday.map((day: any) => ({
+          dt: new Date(day.date).getTime() / 1000,
+          temp: {
+            min: day.day.mintemp_c,
+            max: day.day.maxtemp_c
+          },
+          weather: [{
+            main: day.day.condition.text,
+            description: day.day.condition.text,
+            icon: day.day.condition.icon.split('/').pop()?.split('.')[0] || '01d'
+          }]
+        }))
+      };
+
+      res.json(weatherData);
     } catch (error) {
       console.error("Error fetching weather data:", error);
       res.status(500).json({ error: "Failed to fetch weather data" });
@@ -72,11 +100,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(q)}&units=metric&lang=ar&appid=${OPENWEATHER_API_KEY}`
+        `https://api.weatherapi.com/v1/current.json?key=${WEATHERAPI_KEY}&q=${encodeURIComponent(q)}&aqi=no&lang=ar`
       );
 
       if (!response.ok) {
-        throw new Error(`OpenWeather API error: ${response.status}`);
+        throw new Error(`WeatherAPI error: ${response.status}`);
       }
 
       const data = await response.json();

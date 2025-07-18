@@ -50,6 +50,7 @@ export class MemStorage implements IStorage {
     const favoriteCity: FavoriteCity = { 
       ...insertFavoriteCity, 
       id,
+      userId: insertFavoriteCity.userId || null,
       createdAt: new Date()
     };
     this.favoriteCities.set(id, favoriteCity);

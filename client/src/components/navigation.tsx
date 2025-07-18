@@ -16,7 +16,7 @@ export function Navigation() {
       <div className="flex justify-around items-center py-2">
         {navItems.map((item) => (
           <Link key={item.href} href={item.href}>
-            <a
+            <div
               className={cn(
                 "nav-item",
                 location === item.href && "active"
@@ -24,7 +24,7 @@ export function Navigation() {
             >
               <i className={`${item.icon} text-xl`}></i>
               <span className="text-xs mt-1">{item.label}</span>
-            </a>
+            </div>
           </Link>
         ))}
       </div>
