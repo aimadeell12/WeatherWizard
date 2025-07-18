@@ -80,10 +80,13 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('sync', (event) => {
   console.log('[ServiceWorker] Background sync', event.tag);
   
-  if (event.tag === 'weather-sync') {
+  // Validate event tag length and content
+  if (event.tag && event.tag.length <= 20 && event.tag === 'weather-sync') {
     event.waitUntil(
       // Sync weather data when back online
-      syncWeatherData()
+      syncWeatherData().catch((error) => {
+        console.log('[ServiceWorker] Sync failed:', error);
+      })
     );
   }
 });

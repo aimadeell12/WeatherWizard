@@ -19,9 +19,12 @@ if ('serviceWorker' in navigator) {
         }
         
         // Register for background sync (basic support)
-        if ('sync' in window.ServiceWorkerRegistration.prototype && registration.sync) {
+        if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
           try {
-            registration.sync.register('weather-sync');
+            // Check if sync is available on the registration
+            if (registration.sync) {
+              registration.sync.register('weather-sync');
+            }
           } catch (error) {
             console.log('Background sync not supported:', error);
           }
