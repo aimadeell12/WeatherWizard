@@ -3,9 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
-import { Settings, Moon, Sun, Globe, Thermometer, Bell, Info, Shield, FileText, Copyright, Phone, Download, Upload, RotateCcw, Trash2 } from 'lucide-react';
+import { Settings, Moon, Sun, Globe, Thermometer, Bell, Info, Shield, FileText, Copyright, Phone, Download, Upload, RotateCcw, Trash2, Database } from 'lucide-react';
 import { Navigation } from '@/components/navigation';
 import { Link } from 'wouter';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -18,7 +18,6 @@ export default function SettingsPage() {
   const { toast } = useToast();
   const [importData, setImportData] = useState('');
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
-  const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const getCurrentDate = () => {
@@ -74,20 +73,28 @@ export default function SettingsPage() {
   };
 
   const handleExportSettings = () => {
-    const data = exportSettings();
-    const blob = new Blob([data], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'weather-app-settings.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    toast({
-      title: "تم تصدير الإعدادات",
-      description: "تم حفظ الإعدادات في ملف JSON",
-    });
+    try {
+      const data = exportSettings();
+      const blob = new Blob([data], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'weather-app-settings.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast({
+        title: "تم تصدير الإعدادات",
+        description: "تم حفظ الإعدادات في ملف JSON",
+      });
+    } catch (error) {
+      toast({
+        title: "خطأ في تصدير الإعدادات",
+        description: "حدث خطأ أثناء تصدير الإعدادات",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleImportSettings = () => {
@@ -113,18 +120,38 @@ export default function SettingsPage() {
   const handleFileImport = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
+        toast({
+          title: "نوع ملف غير صالح",
+          description: "يرجى اختيار ملف JSON فقط",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       const reader = new FileReader();
       reader.onload = (e) => {
         const content = e.target?.result as string;
         setImportData(content);
         setIsImportDialogOpen(true);
       };
+      reader.onerror = () => {
+        toast({
+          title: "خطأ في قراءة الملف",
+          description: "حدث خطأ أثناء قراءة الملف",
+          variant: "destructive",
+        });
+      };
       reader.readAsText(file);
     }
+    // Clear the input
+    event.target.value = '';
   };
 
+
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600">
+    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600 dark:from-purple-900 dark:via-purple-800 dark:to-purple-900">
       {/* Header */}
       <header className="bg-primary shadow-lg">
         <div className="container mx-auto px-4 py-4">
@@ -142,9 +169,9 @@ export default function SettingsPage() {
       <main className="container mx-auto px-4 py-6 pb-20">
         <div className="space-y-6">
           {/* Display Settings */}
-          <Card className="bg-white/95 backdrop-blur-sm">
+          <Card className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border-gray-200 dark:border-gray-700">
             <CardHeader>
-              <CardTitle className="flex items-center">
+              <CardTitle className="flex items-center text-foreground">
                 <Sun className="w-5 h-5 text-purple-600 mr-2" />
                 إعدادات العرض
               </CardTitle>
@@ -153,7 +180,7 @@ export default function SettingsPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <Moon className="w-5 h-5 text-purple-600 mr-2" />
-                  <Label htmlFor="dark-mode">الوضع المظلم</Label>
+                  <Label htmlFor="dark-mode" className="text-foreground">الوضع المظلم</Label>
                 </div>
                 <Switch
                   id="dark-mode"
@@ -165,7 +192,7 @@ export default function SettingsPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <Thermometer className="w-5 h-5 text-purple-600 mr-2" />
-                  <Label htmlFor="temp-unit">وحدة الحرارة</Label>
+                  <Label htmlFor="temp-unit" className="text-foreground">وحدة الحرارة</Label>
                 </div>
                 <div className="flex items-center space-x-2 space-x-reverse">
                   <Button
@@ -190,7 +217,7 @@ export default function SettingsPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <Globe className="w-5 h-5 text-purple-600 mr-2" />
-                  <Label htmlFor="language">اللغة</Label>
+                  <Label htmlFor="language" className="text-foreground">اللغة</Label>
                 </div>
                 <div className="flex items-center space-x-2 space-x-reverse">
                   <Button
@@ -213,9 +240,9 @@ export default function SettingsPage() {
           </Card>
 
           {/* Notification Settings */}
-          <Card className="bg-white/95 backdrop-blur-sm">
+          <Card className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border-gray-200 dark:border-gray-700">
             <CardHeader>
-              <CardTitle className="flex items-center">
+              <CardTitle className="flex items-center text-foreground">
                 <Bell className="w-5 h-5 text-purple-600 mr-2" />
                 إعدادات التنبيهات
               </CardTitle>
@@ -240,7 +267,7 @@ export default function SettingsPage() {
               </div>
 
               <div className="flex items-center justify-between">
-                <Label htmlFor="auto-refresh">التحديث التلقائي</Label>
+                <Label htmlFor="auto-refresh" className="text-foreground">التحديث التلقائي</Label>
                 <Switch
                   id="auto-refresh"
                   checked={settings.autoRefresh}
@@ -250,7 +277,7 @@ export default function SettingsPage() {
 
               {settings.autoRefresh && (
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="refresh-interval">فترة التحديث (بالدقائق)</Label>
+                  <Label htmlFor="refresh-interval" className="text-foreground">فترة التحديث (بالدقائق)</Label>
                   <div className="flex items-center space-x-2 space-x-reverse">
                     {[5, 10, 15, 30].map((interval) => (
                       <Button
@@ -270,33 +297,33 @@ export default function SettingsPage() {
           </Card>
 
           {/* App Info */}
-          <Card className="bg-white/95 backdrop-blur-sm">
+          <Card className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border-gray-200 dark:border-gray-700">
             <CardHeader>
-              <CardTitle className="flex items-center">
+              <CardTitle className="flex items-center text-foreground">
                 <Info className="w-5 h-5 text-purple-600 mr-2" />
                 معلومات التطبيق
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
-                <span>إصدار التطبيق</span>
+                <span className="text-foreground">إصدار التطبيق</span>
                 <span className="text-purple-600 font-medium english-numbers">1.0.0</span>
               </div>
               <div className="flex items-center justify-between">
-                <span>مصدر البيانات</span>
+                <span className="text-foreground">مصدر البيانات</span>
                 <span className="text-purple-600 font-medium">WeatherAPI.com</span>
               </div>
               <div className="flex items-center justify-between">
-                <span>آخر تحديث</span>
+                <span className="text-foreground">آخر تحديث</span>
                 <span className="text-purple-600 font-medium">{getCurrentDate()}</span>
               </div>
             </CardContent>
           </Card>
 
           {/* Legal Links */}
-          <Card className="bg-white/95 backdrop-blur-sm">
+          <Card className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border-gray-200 dark:border-gray-700">
             <CardHeader>
-              <CardTitle className="flex items-center">
+              <CardTitle className="flex items-center text-foreground">
                 <Shield className="w-5 h-5 text-purple-600 mr-2" />
                 الخصوصية والأمان
               </CardTitle>
@@ -324,22 +351,22 @@ export default function SettingsPage() {
               {/* Copyright Notice */}
               <div className="flex items-center py-2">
                 <Copyright className="w-4 h-4 mr-2 text-purple-600" />
-                <span className="text-sm text-gray-600">جميع الحقوق محفوظة</span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">جميع الحقوق محفوظة</span>
               </div>
               
               {/* Phone Number */}
               <div className="flex items-center py-2">
                 <Phone className="w-4 h-4 mr-2 text-purple-600" />
-                <span className="text-sm text-gray-600 english-numbers">+212663381823</span>
+                <span className="text-sm text-gray-600 dark:text-gray-400 english-numbers">+212663381823</span>
               </div>
             </CardContent>
           </Card>
 
           {/* Data Management */}
-          <Card className="bg-white/95 backdrop-blur-sm">
+          <Card className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border-gray-200 dark:border-gray-700">
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <Globe className="w-5 h-5 text-purple-600 mr-2" />
+              <CardTitle className="flex items-center text-foreground">
+                <Database className="w-5 h-5 text-purple-600 mr-2" />
                 إدارة البيانات
               </CardTitle>
             </CardHeader>
@@ -364,6 +391,9 @@ export default function SettingsPage() {
                   <DialogContent>
                     <DialogHeader>
                       <DialogTitle>استيراد الإعدادات</DialogTitle>
+                      <DialogDescription>
+                        يمكنك استيراد الإعدادات من ملف JSON أو لصق البيانات مباشرة
+                      </DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4">
                       <div className="flex gap-2">
@@ -431,7 +461,7 @@ export default function SettingsPage() {
                 </Button>
               </div>
               
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 يمكنك تصدير الإعدادات الحالية أو استيراد إعدادات محفوظة سابقاً
               </p>
             </CardContent>
