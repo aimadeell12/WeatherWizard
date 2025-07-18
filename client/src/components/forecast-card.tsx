@@ -9,7 +9,7 @@ interface ForecastCardProps {
 export function ForecastCard({ forecast }: ForecastCardProps) {
   const getDayName = (timestamp: number) => {
     const date = new Date(timestamp * 1000);
-    return date.toLocaleDateString("ar-SA", { weekday: "long" });
+    return date.toLocaleDateString("ar-EG", { weekday: "long", calendar: "gregory" });
   };
 
   return (

@@ -22,7 +22,7 @@ export function WeatherCard({ weather, cityName, currentDate }: WeatherCardProps
             <p className="text-gray-600">{currentDate}</p>
           </div>
           <div className="text-right">
-            <span className="text-4xl font-bold text-primary">
+            <span className="text-4xl font-bold text-purple-600">
               {Math.round(weather.temp)}°
             </span>
             <span className="text-xl text-gray-600">C</span>

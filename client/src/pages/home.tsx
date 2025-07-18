@@ -17,13 +17,14 @@ export default function Home() {
   const [searchResults, setSearchResults] = useState<CityResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
-  // Get current date in Arabic
+  // Get current date in Arabic with Gregorian calendar
   const getCurrentDate = () => {
-    return new Date().toLocaleDateString("ar-SA", {
+    return new Date().toLocaleDateString("ar-EG", {
       weekday: "long",
       year: "numeric",
       month: "long",
       day: "numeric",
+      calendar: "gregory"
     });
   };
 
@@ -78,7 +79,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600">
+    <div className="min-h-screen bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600">
       {/* Header */}
       <header className="bg-primary shadow-lg">
         <div className="container mx-auto px-4 py-4">
@@ -149,7 +150,7 @@ export default function Home() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
               <Card className="weather-detail-card">
                 <CardContent className="p-4">
-                  <i className="fas fa-thermometer-half text-orange-500 text-2xl mb-2"></i>
+                  <i className="fas fa-thermometer-half text-purple-500 text-2xl mb-2"></i>
                   <p className="text-sm text-gray-600">الحرارة العظمى</p>
                   <p className="text-xl font-bold">
                     {Math.round(weatherData.daily[0].temp.max)}°
@@ -158,7 +159,7 @@ export default function Home() {
               </Card>
               <Card className="weather-detail-card">
                 <CardContent className="p-4">
-                  <i className="fas fa-thermometer-empty text-blue-500 text-2xl mb-2"></i>
+                  <i className="fas fa-thermometer-empty text-purple-400 text-2xl mb-2"></i>
                   <p className="text-sm text-gray-600">الحرارة الصغرى</p>
                   <p className="text-xl font-bold">
                     {Math.round(weatherData.daily[0].temp.min)}°
@@ -167,14 +168,14 @@ export default function Home() {
               </Card>
               <Card className="weather-detail-card">
                 <CardContent className="p-4">
-                  <i className="fas fa-tint text-blue-400 text-2xl mb-2"></i>
+                  <i className="fas fa-tint text-purple-600 text-2xl mb-2"></i>
                   <p className="text-sm text-gray-600">الرطوبة</p>
                   <p className="text-xl font-bold">{weatherData.current.humidity}%</p>
                 </CardContent>
               </Card>
               <Card className="weather-detail-card">
                 <CardContent className="p-4">
-                  <i className="fas fa-wind text-gray-500 text-2xl mb-2"></i>
+                  <i className="fas fa-wind text-purple-300 text-2xl mb-2"></i>
                   <p className="text-sm text-gray-600">الرياح</p>
                   <p className="text-xl font-bold">
                     {Math.round(weatherData.current.wind_speed)} كم/س
