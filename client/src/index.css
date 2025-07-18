@@ -80,6 +80,15 @@
   .bottom-nav-shadow {
     box-shadow: 0 -4px 20px rgba(147, 51, 234, 0.1);
   }
+  
+  /* Enhanced navigation animations */
+  .nav-item:hover {
+    transform: translateY(-2px);
+  }
+  
+  .nav-item.active {
+    transform: translateY(-3px);
+  }
 }
 
 @layer components {

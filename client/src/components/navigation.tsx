@@ -5,10 +5,10 @@ export function Navigation() {
   const [location] = useLocation();
 
   const navItems = [
-    { href: "/", icon: "fas fa-home", label: "الرئيسية" },
-    { href: "/favorites", icon: "fas fa-star", label: "المفضلة" },
-    { href: "/map", icon: "fas fa-map", label: "الخريطة" },
-    { href: "/settings", icon: "fas fa-cog", label: "الإعدادات" },
+    { href: "/", icon: "fas fa-cloud-sun", label: "الطقس" },
+    { href: "/favorites", icon: "fas fa-heart", label: "المفضلة" },
+    { href: "/forecast", icon: "fas fa-chart-line", label: "التوقعات" },
+    { href: "/settings", icon: "fas fa-sliders-h", label: "الإعدادات" },
   ];
 
   return (
@@ -25,17 +25,17 @@ export function Navigation() {
               <div className={cn(
                 "p-3 rounded-full transition-all duration-300 relative",
                 location === item.href 
-                  ? "bg-gradient-to-br from-purple-500 to-purple-600 text-white shadow-lg" 
-                  : "text-gray-600 hover:bg-purple-50"
+                  ? "bg-gradient-to-br from-purple-500 to-purple-600 text-white shadow-lg shadow-purple-500/50" 
+                  : "text-gray-600 hover:bg-purple-50 hover:text-purple-600"
               )}>
-                <i className={`${item.icon} text-lg`}></i>
+                <i className={`${item.icon} text-xl`}></i>
                 {location === item.href && (
-                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-white rounded-full"></div>
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-white rounded-full border-2 border-purple-500"></div>
                 )}
               </div>
               <span className={cn(
                 "text-xs mt-1 font-medium transition-colors duration-300",
-                location === item.href ? "text-purple-600" : "text-gray-600"
+                location === item.href ? "text-purple-600 font-bold" : "text-gray-600"
               )}>
                 {item.label}
               </span>
