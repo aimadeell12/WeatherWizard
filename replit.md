@@ -56,8 +56,8 @@ Preferred communication style: Simple, everyday language.
 
 ## Data Flow
 
-1. **User Search**: User types city name → Frontend calls `/api/cities/search` → Backend queries OpenWeatherMap Geocoding API → Returns city suggestions
-2. **Weather Data**: User selects city → Frontend calls `/api/weather` with coordinates → Backend fetches current weather and forecast → Returns formatted weather data
+1. **User Search**: User types city name → Frontend calls `/api/cities/search` → Backend queries WeatherAPI.com search endpoint → Returns city suggestions
+2. **Weather Data**: User selects city → Frontend calls `/api/weather` with coordinates → Backend fetches current weather and forecast from WeatherAPI → Returns formatted weather data
 3. **Favorites**: User can save cities → Frontend calls `/api/favorites` → Backend stores in database → User can view saved cities
 
 ## External Dependencies
@@ -77,8 +77,8 @@ Preferred communication style: Simple, everyday language.
 - **@replit/vite-plugin-cartographer**: Replit-specific development tooling
 
 ### External APIs
-- **OpenWeatherMap API**: Weather data and city geocoding
-- **Required Environment Variables**: `OPENWEATHER_API_KEY`, `DATABASE_URL`
+- **WeatherAPI.com**: Weather data and city geocoding with Arabic language support
+- **Required Environment Variables**: `WEATHERAPI_KEY`, `DATABASE_URL`
 
 ## Deployment Strategy
 
